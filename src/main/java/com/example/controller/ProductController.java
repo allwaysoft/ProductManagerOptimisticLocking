@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 
 @Controller
 public class ProductController {
@@ -89,7 +91,11 @@ public class ProductController {
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String saveProduct(@ModelAttribute("product") Product product) {
-        repo.save(product);
+        try {
+            repo.save(product);
+        } catch (Exception e) {
+            return "updatefailed";
+        }
 
         return "redirect:/";
     }
